@@ -2,7 +2,10 @@
   "name": "application-name",
   "version": "0.0.1",
   "private": true,
-  "engine": "node 0.8.x",
+  "engines": {
+    "node": "0.6.x",
+    "npm":  "1.0.x"
+  },
   "scripts": {
     "start": "node app"
   },
