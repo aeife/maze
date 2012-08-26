@@ -18,7 +18,8 @@ imgFloor.src = "images/floor.png";
 var imgMessage = new Image();
 imgMessage.src = "images/message.png";
 
-
+var messageInput = $("#messageInput");
+var writing = false;
 
 var levelWidth = 100;
 var levelHeight = 100;
@@ -35,33 +36,63 @@ var player = {x: spawn.x, y: spawn.y};
 var url = "http://localhost:3000";
 var socket = io.connect(url);
 
+// INPUT
 
+messageInput.focusout(function() {
+  console.log("lost focus");
+  writing = false;
+});
 
+messageInput.focus(function() {
+  console.log("focus");
+  writing = true;
+  messageInput.val("");
+});
 
 document.onkeydown = function(e) {
-    switch(e.keyCode) {
-        case 87:
-            //w
-            moveUp();
-            break;
-        case 65:
-            //a
-            moveLeft();
-            break;
-        case 83:
-            //s
-            moveDown();
-            break;
-        case 68:
-            //d
-            moveRight();
-            break;
-        case 77:
-            //m
-            dropMessage();
-            //ctx.fillText("Sample String", 10, 50);
-            break;
-    };
+    if (!writing){
+        switch(e.keyCode) {
+            case 87:
+                //w
+                moveUp();
+                break;
+            case 65:
+                //a
+                moveLeft();
+                break;
+            case 83:
+                //s
+                moveDown();
+                break;
+            case 68:
+                //d
+                moveRight();
+                break;
+            case 77:
+                //m
+                messageInput.removeClass("hidden");
+                messageInput.trigger("focus");
+                //ctx.fillText("Sample String", 10, 50);
+                break;
+        };
+    } else {
+        switch(e.keyCode) {
+            case 13:
+                //enter
+                console.log("submitted");
+                dropMessage();
+                messageInput.addClass("hidden");
+                messageInput.trigger("focusout");
+                break;
+            case 27:
+                //esc
+                console.log("canceled");
+                messageInput.val("");
+                messageInput.addClass("hidden");
+                messageInput.trigger("focusout");
+                break;
+        };
+    }
 };
 
 //----------------------------SOCKETS-----------------
@@ -179,7 +210,7 @@ function moveRight(){
 }
 
 function dropMessage(){
-    var message = "Testmessage"
+    var message = messageInput.val();
     level[player.x][player.y].message = message;
     drawTile(offset, offset, level[player.x][player.y]);
 

@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <head>
+        <title><%= title %></title>
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+    </head>
+    <body>
+        <h1><%= title %></h1>
+        <p>Welcome to <%= title %></p>
 
-    <canvas id="level" width="800" height="600">
-    	need canvas
-    </canvas>
-
-
-
-    <script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
-	<script src="/javascripts/script.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
+        <canvas id="level" width="800" height="600">
+            need canvas
+        </canvas>
+        <input id="messageInput" class="hidden" type="text" size="30" maxlength="30">
 
 
-  </body>
+        <script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+        <script src="/javascripts/script.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+
+
+    </body>
 </html>
