@@ -37,10 +37,12 @@ var io = require('socket.io').listen(server);
 // Heroku won't actually allow us to use WebSockets
 // so we have to setup polling instead.
 // https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku
+/*
 io.configure(function () {
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
 });
+ */
 
 var players = [];
 var levelWidth = 100;
@@ -82,6 +84,11 @@ io.sockets.on('connection', function (socket) {
         level[data.x][data.y].message = data.message;
 
         socket.broadcast.emit('newMessage', data);
+    });
+
+    socket.on("disconnect", function(data){
+        console.log("WEG!!!!!!!!!!!!!!!!");
+        socket.broadcast.emit('playerDisconnected', data);
     });
 
 });

@@ -122,6 +122,13 @@ socket.on('newPlayer', function (idNr) {
     spawnClient(spawn.x, spawn.y);
 });
 
+socket.on('playerDisconnected', function (data) {
+    // client disconnected, delete client
+    console.log("player disconnected");
+    console.log(data);
+    deleteClient(data.x, data.y);
+});
+
 socket.on('newPosition', function (data) {
     // other player moved
     console.log("got new position");
@@ -219,6 +226,24 @@ function dropMessage(){
 
 function spawnClient(x,y){
     level[x][y].players++;
+    if (isVisible(x,y)) {
+        drawClient(x,y);
+    }
+}
+
+function deleteClient(x,y,clientId){
+    level[x][y].players--;
+
+    // delete vom players array
+    //players.push({x: spawn.x, y: spawn.y, idNr: idNr});
+    for (var i=0; i<players.length; i++){
+        if (players[i].idNr === clientId) {
+            client = players[i];
+        }
+    }
+
+    players.splice(players.indexOf(client), 1);
+
     if (isVisible(x,y)) {
         drawClient(x,y);
     }
