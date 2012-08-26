@@ -105,6 +105,7 @@ socket.on('successfullyConnected', function (data) {
     player.idNr = data.idNr;
     players = data.currentPlayers;
     level = data.level;
+    console.log(level);
     level[spawn.x][spawn.y].players++;
     console.log(players);
     for (var i=0; i<players.length; i++){

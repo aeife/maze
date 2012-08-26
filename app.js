@@ -37,11 +37,12 @@ var io = require('socket.io').listen(server);
 var players = [];
 var levelWidth = 100;
 var levelHeight = 100;
-var level = generateLevel();
-fillWithWalls(2, 4, 16, 20);
-fillWithWalls(2, 4, 8, 50);
-fillWithWalls(2, 4, 4, 100);
-fillWithWalls(1, 2, 2, 20);
+//var level = generateLevel();
+//fillWithWalls(2, 4, 16, 20);
+//fillWithWalls(2, 4, 8, 50);
+//fillWithWalls(2, 4, 4, 100);
+//fillWithWalls(1, 2, 2, 20);
+var level = loadLevel();
 
 io.sockets.on('connection', function (socket) {
     console.log("connected");
@@ -90,6 +91,17 @@ io.sockets.on('connection', function (socket) {
 
 
 // LEVEL GENERATION
+
+function loadLevel(){
+     //var test = require('level.txt');
+     //var test2 = JSON.parse(test);
+     //console.log(test);
+    var fs = require('fs');
+    var l = fs.readFileSync('level.txt').toString().split("\n");
+
+    return JSON.parse(l);
+
+}
 
 function generateLevel(){
     
