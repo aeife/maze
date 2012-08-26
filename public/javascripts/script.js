@@ -36,19 +36,19 @@ document.onkeydown = function(e) {
     switch(e.keyCode) {
         case 87:
             //w
-            moveUp(10);
+            moveUp();
             break;
         case 65:
             //a
-            moveLeft(10);
+            moveLeft();
             break;
         case 83:
             //s
-            moveDown(10);
+            moveDown();
             break;
         case 68:
             //d
-            moveRight(10);
+            moveRight();
             break;
     };
 };
@@ -97,7 +97,7 @@ socket.on('newPosition', function (data) {
 
 //----------------------------FUNCTIONS-----------------
 
-function moveUp(speed){
+function moveUp(){
     if (level[player.x][player.y-1].background === "wall")
         return;
 
@@ -110,7 +110,7 @@ function moveUp(speed){
     emitNewPosition();
 }
 
-function moveLeft(speed){
+function moveLeft(){
     if (level[player.x-1][player.y].background === "wall")
         return;
 
@@ -123,7 +123,7 @@ function moveLeft(speed){
     emitNewPosition();
 }
 
-function moveDown(speed){
+function moveDown(){
     if (level[player.x][player.y+1].background === "wall")
         return;
 
@@ -136,7 +136,7 @@ function moveDown(speed){
     emitNewPosition();
 }
 
-function moveRight(speed){
+function moveRight(){
     if (level[player.x+1][player.y].background === "wall")
         return;
 
