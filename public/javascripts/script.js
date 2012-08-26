@@ -60,9 +60,13 @@ img.onload = function(){
     ctx.drawImage(img, player.x,player.y,tileWidth,tileWidth);
     console.log(img.width);
 
-    level = generateLevel();
+    //level = generateLevel();
+    console.log(level);
     
-    level[spawn.x][spawn.y].players++;
+    console.log("filled!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    console.log(level);
+    
+    
 
 };
 
@@ -72,6 +76,8 @@ socket.on('successfullyConnected', function (data) {
     console.log(data);
     player.idNr = data.idNr;
     players = data.currentPlayers;
+    level = data.level;
+    level[spawn.x][spawn.y].players++;
     console.log(players);
     for (var i=0; i<players.length; i++){
         spawnClient(players[i].x, players[i].y);
@@ -94,6 +100,13 @@ socket.on('newPosition', function (data) {
     moveTo(data.idNr, data.x, data.y);
 });
 
+function emitNewPosition(){
+    socket.emit('move',{
+        x: player.x,
+        y: player.y,
+        idNr: player.idNr
+    });
+}
 
 //----------------------------FUNCTIONS-----------------
 
@@ -236,32 +249,6 @@ function drawTile(x, y, tile){
     }
 }
 
-function generateLevel(){
-    
-    console.log("generate level");
-    var l = [];
-    for (var i=0; i<levelWidth; i++){
-        l[i] = [];
-        for (var j=0; j<levelHeight; j++){
-            if (i === 0 || j === 0 || i === levelWidth-1 || j === levelWidth-1){
-                l[i][j] = {background: "wall"};
-            } else {
-                l[i][j] = {background: "floor"};
-            }
-            l[i][j].players = 0;
-        }
-    }
-    console.log(l);
-    
-    return l;
-}
 
-function emitNewPosition(){
-    socket.emit('move',{
-        x: player.x,
-        y: player.y,
-        idNr: player.idNr
-    });
-}
 
 });
