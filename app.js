@@ -57,7 +57,8 @@ var level = loadLevel();
 io.sockets.on('connection', function (socket) {
 
     //generate unique id
-    var idNr = Math.round(new Date()*Math.random());
+    //var idNr = Math.round(new Date()*Math.random());
+    var idNr = socket.id;
     
     var connectionData = {idNr: idNr, currentPlayers: players, level: level};
 
@@ -87,8 +88,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on("disconnect", function(data){
-        console.log("WEG!!!!!!!!!!!!!!!!");
-        socket.broadcast.emit('playerDisconnected', data);
+        socket.broadcast.emit('playerDisconnected', socket.id);
     });
 
 });
