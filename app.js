@@ -75,7 +75,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on("droppedNewMessage", function(data){
-        level[data.x][data.y].message = true;
+        level[data.x][data.y].message = data.message;
 
         console.log("message");
 

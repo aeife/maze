@@ -3,17 +3,20 @@ $(function(){
 var canvas = $("#level");
 var ctx = canvas[0].getContext("2d");
 
-var img = new Image();
-img.src = "images/player.png";
+var imgPlayer = new Image();
+imgPlayer.src = "images/player.png";
 
-var wall = new Image();
-wall.src = "images/wall.png";
+var imgClient = new Image();
+imgClient.src = "images/client.png";
 
-var floor = new Image();
-floor.src = "images/floor.png";
+var imgWall = new Image();
+imgWall.src = "images/wall.png";
 
-var message = new Image();
-message.src = "images/message.png";
+var imgFloor = new Image();
+imgFloor.src = "images/floor.png";
+
+var imgMessage = new Image();
+imgMessage.src = "images/message.png";
 
 
 
@@ -56,26 +59,13 @@ document.onkeydown = function(e) {
         case 77:
             //m
             dropMessage();
+            //ctx.fillText("Sample String", 10, 50);
             break;
     };
 };
 
 //----------------------------SOCKETS-----------------
 
-//starting position
-img.onload = function(){
-    ctx.drawImage(img, player.x,player.y,tileWidth,tileWidth);
-    console.log(img.width);
-
-    //level = generateLevel();
-    console.log(level);
-    
-    console.log("filled!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log(level);
-    
-    
-
-};
 
 socket.on('successfullyConnected', function (data) {
     // own player connected and receiving data like all current players
@@ -111,10 +101,9 @@ socket.on('newMessage', function (data) {
 
     console.log("got new message");
 
-    level[data.x][data.y].message = true;
+    level[data.x][data.y].message = data.message;
     if (isVisible(data.x, data.y)){
-        console.log((data.x-player.x+offset) + ":" + (data.y-player.y+offset));
-        drawTile((data.x-player.x+offset), (data.y-player.y+offset), level[data.x][data.y]);
+        drawClient(data.x, data.y);
     }
 });
 
@@ -126,11 +115,12 @@ function emitNewPosition(){
     });
 }
 
-function emitNewMessage(){
+function emitNewMessage(message){
     socket.emit('droppedNewMessage',{
         x: player.x,
         y: player.y,
-        idNr: player.idNr
+        idNr: player.idNr,
+        message: message
     });
 }
 
@@ -189,10 +179,11 @@ function moveRight(){
 }
 
 function dropMessage(){
-    level[player.x][player.y].message = true;
+    var message = "Testmessage"
+    level[player.x][player.y].message = message;
     drawTile(offset, offset, level[player.x][player.y]);
 
-    emitNewMessage();
+    emitNewMessage(message);
 }
 
 function spawnClient(x,y){
@@ -234,7 +225,7 @@ function moveTo(clientId, x, y){
         console.log("client visible!");
 
         console.log("drawing player: x=" + (x-player.x+offset) *tileWidth + " y=" + (y-player.y-offset) *tileWidth);
-        ctx.drawImage(img, (x-player.x+offset) *tileWidth, (y-player.y+offset) *tileWidth, 100, 100);
+        ctx.drawImage(imgClient, (x-player.x+offset) *tileWidth, (y-player.y+offset) *tileWidth, 100, 100);
 
     }
 
@@ -243,7 +234,7 @@ function moveTo(clientId, x, y){
     client.y=y;
 
     //draw own player
-    ctx.drawImage(img,offset*tileWidth,offset*tileWidth, tileWidth, tileWidth);
+    ctx.drawImage(imgPlayer,offset*tileWidth,offset*tileWidth, tileWidth, tileWidth);
 }
 
 function isVisible(x,y){
@@ -262,8 +253,10 @@ function drawView(){
         }
     }
 
-    //draw own player
-    //ctx.drawImage(img,1*tileWidth,1*tileWidth, tileWidth, tileWidth);
+    if (level[player.x][player.y].message)
+        ctx.fillText(level[player.x][player.y].message, 10, 50);
+
+   
 }
 
 function drawTile(x, y, tile){
@@ -271,20 +264,25 @@ function drawTile(x, y, tile){
     // 
     //console.log("x: " + x + " y: " + y + " tile: " + tile);
     if (tile.background === "wall") {
-        ctx.drawImage(wall, x*tileWidth, y*tileWidth);
+        ctx.drawImage(imgWall, x*tileWidth, y*tileWidth);
     } else {
-        ctx.drawImage(floor, x*tileWidth, y*tileWidth);
+        ctx.drawImage(imgFloor, x*tileWidth, y*tileWidth);
     }
 
-    if (tile.message === true) {
-        ctx.drawImage(message, x*tileWidth, y*tileWidth);
+    if (tile.message) {
+        console.log("draw message");
+        ctx.drawImage(imgMessage, x*tileWidth, y*tileWidth);
     }
 
     //draw other players
     //console.log(tile.players);
-    if (tile.players > 0){
+    if (tile.players > 0 && (x != offset || y != offset)){
         console.log("drawing other player");
-        ctx.drawImage(img, x*tileWidth, y*tileWidth, 100, 100);
+        ctx.drawImage(imgClient, x*tileWidth, y*tileWidth, 100, 100);
+    } else if (x === offset && y === offset) {
+        //draw own player
+        console.log("drawing own player");
+        ctx.drawImage(imgPlayer,offset*tileWidth,offset*tileWidth);
     }
 }
 
