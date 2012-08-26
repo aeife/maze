@@ -12,6 +12,9 @@ wall.src = "images/wall.png";
 var floor = new Image();
 floor.src = "images/floor.png";
 
+var message = new Image();
+message.src = "images/message.png";
+
 
 
 var levelWidth = 100;
@@ -49,6 +52,10 @@ document.onkeydown = function(e) {
         case 68:
             //d
             moveRight();
+            break;
+        case 77:
+            //m
+            dropMessage();
             break;
     };
 };
@@ -100,8 +107,27 @@ socket.on('newPosition', function (data) {
     moveTo(data.idNr, data.x, data.y);
 });
 
+socket.on('newMessage', function (data) {
+
+    console.log("got new message");
+
+    level[data.x][data.y].message = true;
+    if (isVisible(data.x, data.y)){
+        console.log((data.x-player.x+offset) + ":" + (data.y-player.y+offset));
+        drawTile((data.x-player.x+offset), (data.y-player.y+offset), level[data.x][data.y]);
+    }
+});
+
 function emitNewPosition(){
     socket.emit('move',{
+        x: player.x,
+        y: player.y,
+        idNr: player.idNr
+    });
+}
+
+function emitNewMessage(){
+    socket.emit('droppedNewMessage',{
         x: player.x,
         y: player.y,
         idNr: player.idNr
@@ -162,6 +188,13 @@ function moveRight(){
     emitNewPosition();
 }
 
+function dropMessage(){
+    level[player.x][player.y].message = true;
+    drawTile(offset, offset, level[player.x][player.y]);
+
+    emitNewMessage();
+}
+
 function spawnClient(x,y){
     level[x][y].players++;
     if (isVisible(x,y)) {
@@ -172,6 +205,8 @@ function spawnClient(x,y){
 function drawClient(x,y){
     drawTile((x-player.x+offset), (y-player.y+offset),level[x][y]);
 }
+
+
 
 function moveTo(clientId, x, y){
     //get moved client
@@ -239,6 +274,10 @@ function drawTile(x, y, tile){
         ctx.drawImage(wall, x*tileWidth, y*tileWidth);
     } else {
         ctx.drawImage(floor, x*tileWidth, y*tileWidth);
+    }
+
+    if (tile.message === true) {
+        ctx.drawImage(message, x*tileWidth, y*tileWidth);
     }
 
     //draw other players

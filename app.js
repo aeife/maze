@@ -74,6 +74,14 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.emit('newPosition', data);
     });
 
+    socket.on("droppedNewMessage", function(data){
+        level[data.x][data.y].message = true;
+
+        console.log("message");
+
+        socket.broadcast.emit('newMessage', data);
+    });
+
     socket.on("disconnect", function(){
         console.log("disconnected client!");
     });
