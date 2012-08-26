@@ -37,17 +37,15 @@ var player = {x: spawn.x, y: spawn.y};
 
 
 var url = "http://localhost";
-var socket = io.connect(url);
+var socket = io.connect();
 
 // INPUT
 
 messageInput.focusout(function() {
-  console.log("lost focus");
   writing = false;
 });
 
 messageInput.focus(function() {
-  console.log("focus");
   writing = true;
   messageInput.val("");
 });
@@ -104,13 +102,12 @@ document.onkeydown = function(e) {
 socket.on('successfullyConnected', function (data) {
     // own player connected and receiving data like all current players
     console.log("successfully connected");
-    console.log(data);
     player.idNr = data.idNr;
     players = data.currentPlayers;
-    level = data.level;
-    console.log(level);
+
+    level = data.level;;
     level[spawn.x][spawn.y].players++;
-    console.log(players);
+
     for (var i=0; i<players.length; i++){
         spawnClient(players[i].x, players[i].y);
     }
@@ -120,10 +117,9 @@ socket.on('successfullyConnected', function (data) {
 socket.on('newPlayer', function (idNr) {
     // new player connected, spawn player
     console.log("got new player");
-    //console.log(idNr);
+
     players.push({x: spawn.x, y: spawn.y, idNr: idNr});
     spawnClient(spawn.x, spawn.y);
-    console.log(players);
 });
 
 socket.on('newPosition', function (data) {
@@ -242,8 +238,6 @@ function moveTo(clientId, x, y){
             client = players[i];
         }
     }
-    console.log(client);
-
 
     // move player count on level
     level[client.x][client.y].players--;
@@ -251,17 +245,12 @@ function moveTo(clientId, x, y){
 
     // reset previous tile if visible
     if (isVisible(client.x, client.y)) {
-        console.log("prev pos visible: " + (client.x-player.x+offset) + ":" + (client.y-player.y+offset));
         drawTile((client.x-player.x+offset), (client.y-player.y+offset),level[client.x][client.y]);
     }
 
     // print client if visible
     if (isVisible(x, y)) {
-        console.log("client visible!");
-
-        console.log("drawing player: x=" + (x-player.x+offset) *tileWidth + " y=" + (y-player.y-offset) *tileWidth);
         ctx.drawImage(imgClient, (x-player.x+offset) *tileWidth, (y-player.y+offset) *tileWidth, tileWidth, tileWidth);
-
     }
 
     // set new client position
@@ -291,8 +280,6 @@ function drawView(){
     if (level[player.x][player.y].message){
         ctx.font = "25px KnightsQuest";
         ctx.textAlign = "center";
-        console.log(ctx);
-        //ctx.fillText(level[player.x][player.y].message, 200, 200,200);
 
         ctx.drawImage(imgMessageBig,canvas.width()/2-150, 10, 300, 150);
         wrapText(ctx, level[player.x][player.y].message, canvas.width()/2+3, 80, 250, 30);
@@ -323,8 +310,7 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 
 function drawTile(x, y, tile){
     // draw a single tile
-    // 
-    //console.log("x: " + x + " y: " + y + " tile: " + tile);
+
     if (tile.background === "wall") {
         ctx.drawImage(imgWall, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     } else {
@@ -332,19 +318,14 @@ function drawTile(x, y, tile){
     }
 
     if (tile.message) {
-        console.log("draw message");
         ctx.drawImage(imgMessage, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     }
 
-    //draw other players
-    //console.log(tile.players);
-    console.log(tile);
     if (tile.players > 0 && (x != offset || y != offset)){
-        console.log("drawing other player");
+        //draw other players
         ctx.drawImage(imgClient, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     } else if (x === offset && y === offset) {
         //draw own player
-        console.log("drawing own player");
         ctx.drawImage(imgPlayer,offset*tileWidth,offset*tileWidth, tileWidth, tileWidth);
     }
 }

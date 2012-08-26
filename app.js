@@ -53,12 +53,10 @@ var levelHeight = 100;
 var level = loadLevel();
 
 io.sockets.on('connection', function (socket) {
-    console.log("connected");
 
     //generate unique id
     var idNr = Math.round(new Date()*Math.random());
     
-    console.log("idNr: " + idNr);
     var connectionData = {idNr: idNr, currentPlayers: players, level: level};
 
     socket.emit('successfullyConnected', connectionData);
@@ -67,9 +65,6 @@ io.sockets.on('connection', function (socket) {
     players.push({x: 50, y: 50, idNr: idNr});
 
     socket.on("move", function(data){
-        console.log("move");
-        console.log(data.x);
-
         var client;
         for (var i=0; i<players.length; i++){
             if (players[i].idNr === data.idNr) {
@@ -86,13 +81,7 @@ io.sockets.on('connection', function (socket) {
     socket.on("droppedNewMessage", function(data){
         level[data.x][data.y].message = data.message;
 
-        console.log("message");
-
         socket.broadcast.emit('newMessage', data);
-    });
-
-    socket.on("disconnect", function(){
-        console.log("disconnected client!");
     });
 
 });
@@ -101,19 +90,13 @@ io.sockets.on('connection', function (socket) {
 // LEVEL GENERATION
 
 function loadLevel(){
-     //var test = require('level.txt');
-     //var test2 = JSON.parse(test);
-     //console.log(test);
     var fs = require('fs');
     var l = fs.readFileSync('level.txt').toString().split("\n");
 
     return JSON.parse(l);
-
 }
 
 function generateLevel(){
-    
-    console.log("generate level");
     var l = [];
     for (var i=0; i<levelWidth; i++){
         l[i] = [];
@@ -150,17 +133,13 @@ function random(min, max) {
 }
 
 function drawWall(x, y, dir, length){
-    console.log("drawing wall");
     switch (dir){
         case 0:
             //left
            
             for (var i=0; i<length; i++){
-                 console.log("LEFT");
                 if (level[x-i] && level[x-i][y]) {
-                    console.log("setting wall");
                     level[x-i][y].background = "wall";
-                    console.log(level[x-i][y]);
                 }
             }
             break;
@@ -168,7 +147,6 @@ function drawWall(x, y, dir, length){
             //right
             for (var i=0; i<length; i++){
                 if (level[x+i] && level[x+i][y]) {
-                    console.log("setting wall");
                     level[x+i][y].background = "wall";
 
                 }
@@ -178,7 +156,6 @@ function drawWall(x, y, dir, length){
             //up
             for (var i=0; i<length; i++){
                 if (level[x] && level[x][y-i]) {
-                    console.log("setting wall");
                     level[x][y-i].background = "wall";
                 }
             }
@@ -187,7 +164,6 @@ function drawWall(x, y, dir, length){
             //down
             for (var i=0; i<length; i++){
                 if (level[x] && level[x][y+i]) {
-                    console.log("setting wall");
                     level[x][y+i].background = "wall";
                 }
             }
