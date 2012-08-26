@@ -36,7 +36,7 @@ var players = [];
 var player = {x: spawn.x, y: spawn.y};
 
 
-var url = "http://localhost:3000";
+var url = "http://localhost";
 var socket = io.connect(url);
 
 // INPUT
