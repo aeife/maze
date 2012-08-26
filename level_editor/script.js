@@ -31,7 +31,7 @@ function generateEmptyLevel() {
     for (var i=0; i<levelWidth; i++){
         level[i] = [];
         for (var j=0; j<levelHeight; j++) {
-            level[i][j] = {background: "floor"};
+            level[i][j] = {background: "floor", players: 0};
         }
     }
 }
@@ -41,10 +41,10 @@ function drawLevel() {
         for (var j=0; j<levelHeight; j++) {
            if (level[i][j].background === "floor"){
                 console.log("drawing floor");
-                ctx.drawImage(floor,i*tileWidth,j*tileWidth);
+                ctx.drawImage(floor, i*tileWidth, j*tileWidth, tileWidth, tileWidth);
            } else if (level[i][j].background === "wall"){
                 console.log("drawing wall");
-                ctx.drawImage(wall,i*tileWidth,j*tileWidth);
+                ctx.drawImage(wall, i*tileWidth, j*tileWidth, tileWidth, tileWidth);
            }
         }
     }
@@ -73,9 +73,9 @@ canvas.click(function(event){
 
 function drawTile(x,y,tile){
     if (tile.background === "wall"){
-        ctx.drawImage(wall,x*tileWidth,y*tileWidth);
+        ctx.drawImage(wall, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     } else if (tile.background === "floor"){
-        ctx.drawImage(floor,x*tileWidth,y*tileWidth);
+        ctx.drawImage(floor, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     }
 }
 

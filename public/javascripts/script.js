@@ -18,6 +18,9 @@ imgFloor.src = "images/floor.png";
 var imgMessage = new Image();
 imgMessage.src = "images/message.png";
 
+var imgMessageBig = new Image();
+imgMessageBig.src = "images/messageBig.png";
+
 var messageInput = $("#messageInput");
 var writing = false;
 
@@ -257,7 +260,7 @@ function moveTo(clientId, x, y){
         console.log("client visible!");
 
         console.log("drawing player: x=" + (x-player.x+offset) *tileWidth + " y=" + (y-player.y-offset) *tileWidth);
-        ctx.drawImage(imgClient, (x-player.x+offset) *tileWidth, (y-player.y+offset) *tileWidth, 100, 100);
+        ctx.drawImage(imgClient, (x-player.x+offset) *tileWidth, (y-player.y+offset) *tileWidth, tileWidth, tileWidth);
 
     }
 
@@ -266,7 +269,7 @@ function moveTo(clientId, x, y){
     client.y=y;
 
     //draw own player
-    ctx.drawImage(imgPlayer,offset*tileWidth,offset*tileWidth, tileWidth, tileWidth);
+    ctx.drawImage(imgPlayer, offset*tileWidth, offset*tileWidth, tileWidth, tileWidth);
 }
 
 function isVisible(x,y){
@@ -285,10 +288,37 @@ function drawView(){
         }
     }
 
-    if (level[player.x][player.y].message)
-        ctx.fillText(level[player.x][player.y].message, 10, 50);
+    if (level[player.x][player.y].message){
+        ctx.font = "20px Arial";
+        ctx.textAlign = "center";
+        console.log(ctx);
+        //ctx.fillText(level[player.x][player.y].message, 200, 200,200);
+
+        ctx.drawImage(imgMessageBig,canvas.width()/2-150, 10, tileWidth, tileWidth);
+        wrapText(ctx, level[player.x][player.y].message, canvas.width()/2+3, 80, 250, 30);
+    }
 
    
+}
+
+//http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
+function wrapText(context, text, x, y, maxWidth, lineHeight) {
+    var words = text.split(" ");
+    var line = "";
+
+    for(var n = 0; n < words.length; n++) {
+        var testLine = line + words[n] + " ";
+        var metrics = context.measureText(testLine);
+        var testWidth = metrics.width;
+        if(testWidth > maxWidth) {
+            context.fillText(line, x, y);
+            line = words[n] + " ";
+            y += lineHeight;
+        } else {
+            line = testLine;
+        }
+    }
+    context.fillText(line, x, y);
 }
 
 function drawTile(x, y, tile){
@@ -296,25 +326,26 @@ function drawTile(x, y, tile){
     // 
     //console.log("x: " + x + " y: " + y + " tile: " + tile);
     if (tile.background === "wall") {
-        ctx.drawImage(imgWall, x*tileWidth, y*tileWidth);
+        ctx.drawImage(imgWall, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     } else {
-        ctx.drawImage(imgFloor, x*tileWidth, y*tileWidth);
+        ctx.drawImage(imgFloor, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     }
 
     if (tile.message) {
         console.log("draw message");
-        ctx.drawImage(imgMessage, x*tileWidth, y*tileWidth);
+        ctx.drawImage(imgMessage, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     }
 
     //draw other players
     //console.log(tile.players);
+    console.log(tile);
     if (tile.players > 0 && (x != offset || y != offset)){
         console.log("drawing other player");
-        ctx.drawImage(imgClient, x*tileWidth, y*tileWidth, 100, 100);
+        ctx.drawImage(imgClient, x*tileWidth, y*tileWidth, tileWidth, tileWidth);
     } else if (x === offset && y === offset) {
         //draw own player
         console.log("drawing own player");
-        ctx.drawImage(imgPlayer,offset*tileWidth,offset*tileWidth);
+        ctx.drawImage(imgPlayer,offset*tileWidth,offset*tileWidth, tileWidth, tileWidth);
     }
 }
 
