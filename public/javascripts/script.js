@@ -2,17 +2,25 @@ $(function(){
 
 var canvas = $("#level");
 var ctx = canvas[0].getContext("2d");
+
 var img = new Image();
-var player = {x: 0, y: 0};
+img.src = "images/player.png";
+
+var wall = new Image();
+wall.src = "images/wall.png";
+
+var floor = new Image();
+floor.src = "images/floor.png";
+
+var player = {x: 1, y: 1};
 var players = [];
+
+var levelWidth = 100;
+var levelHeight = 100;
+var tileWidth = 100;
+
 var url = "http://localhost:3000";
 var socket = io.connect(url);
-
-
-
-img.src = "images/player.png";
-	player.x = 50;
-	player.y = 50;
 
 
 document.onkeydown = function(e) {
@@ -36,11 +44,15 @@ document.onkeydown = function(e) {
 	};
 };
 
+//----------------------------SOCKETS-----------------
 
 //starting position
 img.onload = function(){
-	ctx.drawImage(img, player.x,player.y);
+	ctx.drawImage(img, player.x,player.y,tileWidth,tileWidth);
 	console.log(img.width);
+
+	level = generateLevel();
+	drawView();
 
 };
 
@@ -57,9 +69,9 @@ socket.on('successfullyConnected', function (data) {
 
 socket.on('newPlayer', function (idNr) {
 	console.log("got new player");
-	console.log(idNr);
-	players.push({x: 50, y: 50, idNr: idNr});
-	ctx.drawImage(img, 50, 50);
+	//console.log(idNr);
+	players.push({x: 1, y: 1, idNr: idNr});
+	moveTo(idNr,1,1);
 	console.log(players);
 });
 
@@ -69,33 +81,46 @@ socket.on('newPosition', function (data) {
 });
 
 
+//----------------------------FUNCTIONS-----------------
 
 function moveUp(speed){
-	ctx.clearRect(player.x-1, player.y-1, img.width+1, img.height+1);
-	ctx.drawImage(img, player.x, player.y-=speed);
+	level[player.x][player.y].player = false;
+	player.y--;
+	level[player.x][player.y].player = true;
+
+	drawView();
 
 	emitNewPosition();
 }
 
 function moveLeft(speed){
-	console.log("left");
-	ctx.clearRect(player.x-1, player.y-1, img.width+1, img.height+1);
-	ctx.drawImage(img, player.x-=speed, player.y);
+	level[player.x][player.y].player = false;
+	player.x--;
+	level[player.x][player.y].player = true;
+
+	drawView();
 
 	emitNewPosition();
 }
 
 function moveDown(speed){
-	ctx.clearRect(player.x-1, player.y-1, img.width+1, img.height+1);
-	ctx.drawImage(img, player.x, player.y+=speed);
+	console.log("!!!!!");
+	console.log(level[1][1]);
+	level[player.x][player.y].player = false;
+	player.y++;
+	level[player.x][player.y].player = true;
+
+	drawView();
 
 	emitNewPosition();
 }
 
 function moveRight(speed){
-	console.log("right");
-	ctx.clearRect(player.x-1, player.y-1, img.width+1, img.height+1);
-	ctx.drawImage(img, player.x+=speed, player.y);
+	level[player.x][player.y].player = false;
+	player.x++;
+	level[player.x][player.y].player = true;
+
+	drawView();
 
 	emitNewPosition();
 }
@@ -103,15 +128,84 @@ function moveRight(speed){
 function moveTo(clientId, x, y){
 	//get special client
 	var client;
-	console.log(clientId);
 	for (var i=0; i<players.length; i++){
 		if (players[i].idNr === clientId) {
 			client = players[i];
 		}
 	}
 	console.log(client);
-	ctx.clearRect(client.x-1, client.y-1, img.width+1, img.height+1);
-	ctx.drawImage(img, client.x=x, client.y=y);
+
+	level[client.x][client.y].player = false;
+	level[x][y].player = true;
+
+	//reset previous tile
+	if ((client.x >= player.x-1 && client.x <= player.x+1) && (client.y >= player.y-1 && client.y <= player.y+1)) {
+		console.log("prev pos visible: " + (client.x-player.x+1) + ":" + (client.y-player.y+1));
+		drawTile((client.x-player.x+1), (client.y-player.y+1),level[client.x][client.y]);
+	}
+
+	//test if visible
+	if ((x >= player.x-1 && x <= player.x+1) && (y >= player.y-1 && y <= player.y+1)) {
+		console.log("client visible!");
+
+		console.log("drawing player: x=" + (x-player.x+1) *tileWidth + " y=" + (y-player.y-1) *tileWidth);
+		ctx.drawImage(img, (x-player.x+1) *tileWidth, (y-player.y+1) *tileWidth, 100, 100);
+
+	}
+
+	client.x=x;
+	client.y=y;
+}
+
+function drawView(){
+	console.log("drawing view");
+	/*
+	for(var i=player.x-1; i<=player.x+1; i++){
+		for(var j=player.y-1; j<=player.y+1; j++){
+			drawTile(i,j);
+		}
+	}*/
+
+	ctx.clearRect(0, 0, 3*tileWidth, 3*tileWidth);
+	for(var i=0; i<3; i++){
+		for(var j=0; j<3; j++){
+			var y = player.y-tileWidth;
+			var x = player.x-tileWidth;
+			drawTile(i,j,level[player.x-1+i][player.y-1+j]);
+		}
+	}
+
+	//ctx.drawImage(img,1*tileWidth,1*tileWidth,tileWidth, tileWidth);
+}
+
+function drawTile(x, y, tile){
+	//console.log("x: " + x + " y: " + y + " tile: " + tile);
+	if (tile.background === "wall") {
+		ctx.drawImage(wall, x*tileWidth, y*tileWidth);
+	} else {
+		ctx.drawImage(floor, x*tileWidth, y*tileWidth);
+	}
+	if (tile.player){
+		ctx.drawImage(img, x*tileWidth, y*tileWidth, 100, 100);
+	}
+}
+
+function generateLevel(){
+	console.log("generate level");
+	var l = [];
+	for (var i=0; i<levelWidth; i++){
+		l[i] = [];
+		for (var j=0; j<levelHeight; j++){
+			if (i === 0 || j === 0 || i === levelWidth-1 || j === levelWidth-1){
+				l[i][j] = {background: "wall"};
+			} else {
+				l[i][j] = {background: "floor"};
+			}
+		}
+	}
+	console.log(l);
+	
+	return l;
 }
 
 function emitNewPosition(){
