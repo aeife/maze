@@ -289,12 +289,12 @@ function drawView(){
     }
 
     if (level[player.x][player.y].message){
-        ctx.font = "20px Arial";
+        ctx.font = "25px KnightsQuest";
         ctx.textAlign = "center";
         console.log(ctx);
         //ctx.fillText(level[player.x][player.y].message, 200, 200,200);
 
-        ctx.drawImage(imgMessageBig,canvas.width()/2-150, 10, tileWidth, tileWidth);
+        ctx.drawImage(imgMessageBig,canvas.width()/2-150, 10, 300, 150);
         wrapText(ctx, level[player.x][player.y].message, canvas.width()/2+3, 80, 250, 30);
     }
 

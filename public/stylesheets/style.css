@@ -10,3 +10,8 @@ a {
 .hidden {
     display:none;
 }
+
+@font-face {
+    font-family: 'KnightsQuest';
+    src: url('KnightsQuest.ttf');
+}​
