@@ -2,11 +2,13 @@
   "name": "application-name",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": "0.8.x",
+  },
   "scripts": {
     "start": "node app"
   },
   "dependencies": {
-    "node": >= "0.6.0",
     "express": "3.0.0rc3",
     "ejs": "*",
     "socket.io": "~0.9.10"
