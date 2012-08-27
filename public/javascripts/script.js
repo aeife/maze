@@ -29,11 +29,10 @@ var levelHeight = 100;
 var viewWidth = 5;
 var offset = Math.floor(viewWidth/2);
 var tileWidth = 100;
-var spawn = {x:1, y:1};
 
 var players = [];
 
-var player = {x: spawn.x, y: spawn.y};
+var player = {x: 0, y: 0};
 
 
 var url = "http://localhost";
@@ -108,23 +107,26 @@ socket.on('successfullyConnected', function (data) {
     // own player connected and receiving data like all current players
     console.log("successfully connected");
     player.idNr = data.idNr;
+    player.x = data.spawn.x;
+    player.y = data.spawn.y;
     players = data.currentPlayers;
 
-    level = data.level;;
-    level[spawn.x][spawn.y].players++;
+    level = data.level;
+    level[data.spawn.x][data.spawn.y].players++;
 
+    // draw players that are already there
     for (var i=0; i<players.length; i++){
         spawnClient(players[i].x, players[i].y);
     }
     drawView();
 });
 
-socket.on('newPlayer', function (idNr) {
+socket.on('newPlayer', function (data) {
     // new player connected, spawn player
     console.log("got new player");
 
-    players.push({x: spawn.x, y: spawn.y, idNr: idNr});
-    spawnClient(spawn.x, spawn.y);
+    players.push({x: data.spawn.x, y: data.spawn.y, idNr: data.idNr});
+    spawnClient(data.spawn.x, data.spawn.y);
 });
 
 socket.on('playerDisconnected', function (idNr) {
@@ -254,8 +256,6 @@ function deleteClient(clientId){
 function drawClient(x,y){
     drawTile((x-player.x+offset), (y-player.y+offset),level[x][y]);
 }
-
-
 
 function moveTo(clientId, x, y){
     //get moved client

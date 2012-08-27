@@ -54,18 +54,21 @@ var levelHeight = 100;
 //fillWithWalls(1, 2, 2, 20);
 var level = loadLevel();
 
+// later: get spawn from level
+var spawn = {x: 1, y:1};
+
 io.sockets.on('connection', function (socket) {
 
     //generate unique id
     //var idNr = Math.round(new Date()*Math.random());
     var idNr = socket.id;
     
-    var connectionData = {idNr: idNr, currentPlayers: players, level: level};
+    var connectionData = {idNr: idNr, currentPlayers: players, level: level, spawn: spawn};
 
     socket.emit('successfullyConnected', connectionData);
-    socket.broadcast.emit('newPlayer', idNr);
+    socket.broadcast.emit('newPlayer', {idNr: idNr, spawn: spawn});
 
-    players.push({x: 50, y: 50, idNr: idNr});
+    players.push({x: spawn.x, y: spawn.y, idNr: idNr});
 
     socket.on("move", function(data){
         var client;
