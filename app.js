@@ -107,7 +107,7 @@ io.sockets.on('connection', function (socket) {
 
 function loadLevel(){
     var fs = require('fs');
-    var l = fs.readFileSync('level.txt').toString().split("\n");
+    var l = fs.readFileSync('maze.txt').toString().split("\n");
 
     return JSON.parse(l);
 }

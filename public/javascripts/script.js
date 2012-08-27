@@ -29,7 +29,7 @@ var levelHeight = 100;
 var viewWidth = 5;
 var offset = Math.floor(viewWidth/2);
 var tileWidth = 100;
-var spawn = {x:3, y:3};
+var spawn = {x:1, y:1};
 
 var players = [];
 
@@ -51,20 +51,25 @@ messageInput.focus(function() {
 });
 
 document.onkeydown = function(e) {
+    console.log(e);
     if (!writing){
         switch(e.keyCode) {
-            case 87:
+            case (38):
+            case (87):
                 //w
                 moveUp();
                 break;
+            case (37):
             case 65:
                 //a
                 moveLeft();
                 break;
+            case (40):
             case 83:
                 //s
                 moveDown();
                 break;
+            case (39):
             case 68:
                 //d
                 moveRight();
