@@ -89,6 +89,15 @@ io.sockets.on('connection', function (socket) {
 
     socket.on("disconnect", function(data){
         socket.broadcast.emit('playerDisconnected', socket.id);
+
+        for (var i=0; i<players.length; i++){
+            if (players[i].idNr === socket.id) {
+                client = players[i];
+            }
+        }
+
+        players.splice(players.indexOf(client), 1);
+
     });
 
 });
