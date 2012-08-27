@@ -53,7 +53,7 @@ var levelHeight = 100;
 //fillWithWalls(2, 4, 4, 100);
 //fillWithWalls(1, 2, 2, 20);
 var level = {width: levelWidth, height: levelHeight, maze: loadLevel(), spawn: {x: 1, y:1}};
-var options = {viewWidth: 3, tileWidth: 200};
+var options = {viewWidth: 3, tileWidth: 200, messageLimit: 3};
 
 io.sockets.on('connection', function (socket) {
 

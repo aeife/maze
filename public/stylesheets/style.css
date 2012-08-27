@@ -32,8 +32,14 @@ h1 {
     margin-top: 0px;
     margin-bottom: 20px;
 }
+
 canvas {
     float:left;
+}
+
+#messageInput {
+    position: absolute;
+
 }
 
 #description {

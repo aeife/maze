@@ -21,8 +21,11 @@ imgMessage.src = "images/message.png";
 var imgMessageBig = new Image();
 imgMessageBig.src = "images/messageBig.png";
 
+var messagesLeftDisplay = $("#messages");
 var messageInput = $("#messageInput");
 var writing = false;
+var messageLimit = 5;
+var messagesDropped = 0;
 
 var levelWidth = 100;
 var levelHeight = 100;
@@ -76,9 +79,12 @@ document.onkeydown = function(e) {
                 break;
             case 77:
                 //m
-                messageInput.removeClass("hidden");
-                messageInput.trigger("focus");
-                //ctx.fillText("Sample String", 10, 50);
+                console.log(canvas);
+                if (messagesDropped < messageLimit) {
+                    messageInput.removeClass("hidden");
+                    messageInput.trigger("focus");
+                    //ctx.fillText("Sample String", 10, 50);
+                }
                 break;
         };
     } else {
@@ -86,6 +92,7 @@ document.onkeydown = function(e) {
             case 13:
                 //enter
                 console.log("submitted");
+                messagesDropped++;
                 dropMessage();
                 messageInput.addClass("hidden");
                 messageInput.trigger("focusout");
@@ -118,6 +125,14 @@ socket.on('successfullyConnected', function (data) {
     tileWidth = data.options.tileWidth;
     canvas.attr("width", viewWidth*tileWidth);
     canvas.attr("height", viewWidth*tileWidth);
+
+    messageLimit = data.options.messageLimit;
+    for (var i=messagesDropped; i<messageLimit; i++){
+        messagesLeftDisplay.append("<img src='images/messageOnly.png' class='message'>")
+    }
+    //messageInput.css(top, canvas.offset.top);
+    //messageInput.css(left, canvas.offset.left);
+    messageInput.css({top: canvas.offset().top + canvas.width()/2 +"px", left: canvas.offset().left + canvas.width()/2 - messageInput.width()/2 +"px"});
 
     level = data.level;
     maze = level.maze;
@@ -236,6 +251,12 @@ function dropMessage(){
     var message = messageInput.val();
     maze[player.x][player.y].message = message;
     drawTile(offset, offset, maze[player.x][player.y]);
+
+    // decrease displayed left messages
+    messagesLeftDisplay.html("");
+    for (var i=messagesDropped; i<messageLimit; i++){
+        messagesLeftDisplay.append("<img src='images/messageOnly.png' class='message'>")
+    }
 
     emitNewMessage(message);
 }
