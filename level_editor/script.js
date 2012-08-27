@@ -3,13 +3,13 @@ $(function(){
 var canvas = $("#level");
 var ctx = canvas[0].getContext("2d");
 var img = new Image();
-img.src = "player.png";
+img.src = "../public/images/player.png";
 
 var wall = new Image();
-wall.src = "wall.png";
+wall.src = "../public/images/wall.png";
 
 var floor = new Image();
-floor.src = "floor.png";
+floor.src = "../public/images/floor.png";
 
 var player = {x: 0, y: 0};
 var players = [];
@@ -31,7 +31,11 @@ function generateEmptyLevel() {
     for (var i=0; i<levelWidth; i++){
         level[i] = [];
         for (var j=0; j<levelHeight; j++) {
-            level[i][j] = {background: "floor", players: 0};
+            if (i === 0 || i === levelWidth-1 || j === 0 || j === levelHeight-1){
+                level[i][j] = {background: "wall", players: 0};
+            } else {
+                level[i][j] = {background: "floor", players: 0};
+            }
         }
     }
 }
