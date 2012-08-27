@@ -301,6 +301,9 @@ function drawView(){
             var x = player.x-tileWidth;
             if (level[player.x-offset+i] && level[player.x-offset+i][player.y-offset+j])
                 drawTile(i,j,level[player.x-offset+i][player.y-offset+j]);
+            else {
+                drawTile(i,j,{background: "wall"});
+            }
         }
     }
 
