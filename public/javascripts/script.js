@@ -26,6 +26,7 @@ var writing = false;
 
 var levelWidth = 100;
 var levelHeight = 100;
+var maze;
 var viewWidth = 5;
 var offset = Math.floor(viewWidth/2);
 var tileWidth = 100;
@@ -50,7 +51,6 @@ messageInput.focus(function() {
 });
 
 document.onkeydown = function(e) {
-    console.log(e);
     if (!writing){
         switch(e.keyCode) {
             case (38):
@@ -107,12 +107,13 @@ socket.on('successfullyConnected', function (data) {
     // own player connected and receiving data like all current players
     console.log("successfully connected");
     player.idNr = data.idNr;
-    player.x = data.spawn.x;
-    player.y = data.spawn.y;
+    player.x = data.level.spawn.x;
+    player.y = data.level.spawn.y;
     players = data.currentPlayers;
 
     level = data.level;
-    level[data.spawn.x][data.spawn.y].players++;
+    maze = level.maze;
+    maze[level.spawn.x][level.spawn.y].players++;
 
     // draw players that are already there
     for (var i=0; i<players.length; i++){
@@ -144,7 +145,7 @@ socket.on('newMessage', function (data) {
 
     console.log("got new message");
 
-    level[data.x][data.y].message = data.message;
+    maze[data.x][data.y].message = data.message;
     if (isVisible(data.x, data.y)){
         drawClient(data.x, data.y);
     }
@@ -170,12 +171,12 @@ function emitNewMessage(message){
 //----------------------------FUNCTIONS-----------------
 
 function moveUp(){
-    if (level[player.x][player.y-1].background === "wall")
+    if (maze[player.x][player.y-1].background === "wall")
         return;
 
-    level[player.x][player.y].players--;
+    maze[player.x][player.y].players--;
     player.y--;
-    level[player.x][player.y].players++;
+    maze[player.x][player.y].players++;
 
     drawView();
 
@@ -183,12 +184,12 @@ function moveUp(){
 }
 
 function moveLeft(){
-    if (level[player.x-1][player.y].background === "wall")
+    if (maze[player.x-1][player.y].background === "wall")
         return;
 
-    level[player.x][player.y].players--;
+    maze[player.x][player.y].players--;
     player.x--;
-    level[player.x][player.y].players++;
+    maze[player.x][player.y].players++;
 
     drawView();
 
@@ -196,12 +197,12 @@ function moveLeft(){
 }
 
 function moveDown(){
-    if (level[player.x][player.y+1].background === "wall")
+    if (maze[player.x][player.y+1].background === "wall")
         return;
 
-    level[player.x][player.y].players--;
+    maze[player.x][player.y].players--;
     player.y++;
-    level[player.x][player.y].players++;
+    maze[player.x][player.y].players++;
 
     drawView();
 
@@ -209,12 +210,12 @@ function moveDown(){
 }
 
 function moveRight(){
-    if (level[player.x+1][player.y].background === "wall")
+    if (maze[player.x+1][player.y].background === "wall")
         return;
 
-    level[player.x][player.y].players--;
+    maze[player.x][player.y].players--;
     player.x++;
-    level[player.x][player.y].players++;
+    maze[player.x][player.y].players++;
 
     drawView();
 
@@ -223,14 +224,14 @@ function moveRight(){
 
 function dropMessage(){
     var message = messageInput.val();
-    level[player.x][player.y].message = message;
-    drawTile(offset, offset, level[player.x][player.y]);
+    maze[player.x][player.y].message = message;
+    drawTile(offset, offset, maze[player.x][player.y]);
 
     emitNewMessage(message);
 }
 
 function spawnClient(x,y){
-    level[x][y].players++;
+    maze[x][y].players++;
     if (isVisible(x,y)) {
         drawClient(x,y);
     }
@@ -244,7 +245,7 @@ function deleteClient(clientId){
         }
     }
 
-    level[client.x][client.y].players--;
+    maze[client.x][client.y].players--;
 
     players.splice(players.indexOf(client), 1);
 
@@ -254,7 +255,7 @@ function deleteClient(clientId){
 }
 
 function drawClient(x,y){
-    drawTile((x-player.x+offset), (y-player.y+offset),level[x][y]);
+    drawTile((x-player.x+offset), (y-player.y+offset),maze[x][y]);
 }
 
 function moveTo(clientId, x, y){
@@ -267,12 +268,12 @@ function moveTo(clientId, x, y){
     }
 
     // move player count on level
-    level[client.x][client.y].players--;
-    level[x][y].players++;
+    maze[client.x][client.y].players--;
+    maze[x][y].players++;
 
     // reset previous tile if visible
     if (isVisible(client.x, client.y)) {
-        drawTile((client.x-player.x+offset), (client.y-player.y+offset),level[client.x][client.y]);
+        drawTile((client.x-player.x+offset), (client.y-player.y+offset),maze[client.x][client.y]);
     }
 
     // print client if visible
@@ -299,20 +300,20 @@ function drawView(){
         for(var j=0; j<viewWidth; j++){
             var y = player.y-tileWidth;
             var x = player.x-tileWidth;
-            if (level[player.x-offset+i] && level[player.x-offset+i][player.y-offset+j])
-                drawTile(i,j,level[player.x-offset+i][player.y-offset+j]);
+            if (maze[player.x-offset+i] && maze[player.x-offset+i][player.y-offset+j])
+                drawTile(i,j,maze[player.x-offset+i][player.y-offset+j]);
             else {
                 drawTile(i,j,{background: "wall"});
             }
         }
     }
 
-    if (level[player.x][player.y].message){
+    if (maze[player.x][player.y].message){
         ctx.font = "25px KnightsQuest";
         ctx.textAlign = "center";
 
         ctx.drawImage(imgMessageBig,canvas.width()/2-150, 10, 300, 150);
-        wrapText(ctx, level[player.x][player.y].message, canvas.width()/2+3, 80, 250, 30);
+        wrapText(ctx, maze[player.x][player.y].message, canvas.width()/2+3, 80, 250, 30);
     }
 
    
