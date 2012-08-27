@@ -32,6 +32,7 @@ var offset = Math.floor(viewWidth/2);
 var tileWidth = 100;
 
 var players = [];
+var playerCountIndicator = $("#playerCount");
 
 var player = {x: 0, y: 0};
 
@@ -110,6 +111,7 @@ socket.on('successfullyConnected', function (data) {
     player.x = data.level.spawn.x;
     player.y = data.level.spawn.y;
     players = data.currentPlayers;
+    playerCountIndicator.html(players.length);
 
     viewWidth = data.options.viewWidth;
     offset = Math.floor(viewWidth/2);
@@ -134,6 +136,8 @@ socket.on('newPlayer', function (data) {
 
     players.push({x: data.spawn.x, y: data.spawn.y, idNr: data.idNr});
     spawnClient(data.spawn.x, data.spawn.y);
+
+    playerCountIndicator.html(players.length);
 });
 
 socket.on('playerDisconnected', function (idNr) {

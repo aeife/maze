@@ -9,14 +9,53 @@
         <![endif]-->
     </head>
     <body>
-        <h1>MAZE</h1>
+        <div id="content">
+            <h1 id="mainHeadline">MAZE</h1>
 
-        <canvas id="level" width="500" height="500" style:>
-            need canvas
-        </canvas>
-        <br/>
-        <input id="messageInput" class="hidden" type="text" size="40" maxlength="40">
+            <canvas id="level" width="500" height="500" style:>
+                need canvas
+            </canvas>
+            <div id="description">
+                You are trapped in a giant maze. Try to find the way out. Maybe someone left a message to help you. And remember: you are not alone.
+                <br/>
 
+                Other Players: <span id="playerCount">0</span>
+
+                <h1>Controls</h1>
+                <table id="controls">
+                    <tr>
+                        <th>Up</th>
+                        <th>W / Arrow Up</th>
+                    </tr>
+                    <tr>
+                        <th>Down</th>
+                        <th>S / Arrow Down</th>
+                    </tr>
+                    <tr>
+                        <th>Left</th>
+                        <th>A / Arrow Left</th>
+                    </tr>
+                    <tr>
+                        <th>Right</th>
+                        <th>D / Arrow Right</th>
+                    </tr>
+                    <tr>
+                        <th>Drop Message</th>
+                        <th>M</th>
+                    </tr>
+                    <tr>
+                        <th>Post Message</th>
+                        <th>Enter</th>
+                    </tr>
+                    <tr>
+                        <th>Cancel Message</th>
+                        <th>Esc</th>
+                    </tr>
+                </table>
+            </div>
+            <br style="clear:left;"/>
+            <input id="messageInput" class="hidden" type="text" size="40" maxlength="40">
+        </div>
 
         <script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
         <script src="/javascripts/script.js"></script>

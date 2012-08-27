@@ -83,7 +83,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on("droppedNewMessage", function(data){
-        level[data.x][data.y].message = data.message;
+        level.maze[data.x][data.y].message = data.message;
 
         socket.broadcast.emit('newMessage', data);
     });
