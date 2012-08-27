@@ -111,6 +111,12 @@ socket.on('successfullyConnected', function (data) {
     player.y = data.level.spawn.y;
     players = data.currentPlayers;
 
+    viewWidth = data.options.viewWidth;
+    offset = Math.floor(viewWidth/2);
+    tileWidth = data.options.tileWidth;
+    canvas.attr("width", viewWidth*tileWidth);
+    canvas.attr("height", viewWidth*tileWidth);
+
     level = data.level;
     maze = level.maze;
     maze[level.spawn.x][level.spawn.y].players++;
