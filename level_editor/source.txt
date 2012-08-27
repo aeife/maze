@@ -2,8 +2,6 @@ Images
 http://opengameart.org/content/basalt-tiles
 http://opengameart.org/content/four-characters-my-lpc-entries
 http://opengameart.org/content/burnt-scroll
-http://opengameart.org/sites/default/files/04muroch256.png
-http://opengameart.org/node/11845
 
 Fonts
 http://www.1001freefonts.com/font/KnightsQuest.zip
