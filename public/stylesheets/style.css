@@ -12,8 +12,9 @@ body {
     width: 1000px; /* set to desired width in px or percent */
     text-align: left; /* optionally you could use "justified" */
     border: 0px;
-    padding: 0;  
+    padding: 0px 30px 30px 30px;  
     margin: 0 auto; 
+    background: url("../images/back.png") repeat;
 }
 
 a {
@@ -50,12 +51,11 @@ canvas {
 }
 
 #controls {
-    padding-left:50px;
     text-align: left;
 }
 
-#description table th {
-    padding-right:50px;
+#description table td {
+    padding-right:30px;
 }
 
 .hidden {
