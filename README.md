@@ -6,3 +6,4 @@
 * full realtime multiplayer using websockets with socket.io
 * graphics using HTML Canvas
 * supports lots of players simultaneously
+* integrated level editor for building mazes
